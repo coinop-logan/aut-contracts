@@ -2,7 +2,7 @@
   "manifestVersion": "3.2",
   "admin": {
     "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-    "txHash": "0x0bec00b999511307909a716b0f0ff468fa911c7d3a5819247daa407d6e18d626"
+    "txHash": "0x70c8dd0a6d3f03d8daf71df93f7c34adf2f59fb8d20ca5313bcc380291a323eb"
   },
   "proxies": [
     {
@@ -5667,27 +5667,27 @@
     },
     {
       "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-      "txHash": "0x3375a66285050f20f7a8c9b03ce6d11f4eacf8ff9f991b45b2d78df9cd517baf",
+      "txHash": "0x7094eabed6a772c39b925a955b44156a886f789e3316f6f04431dcf6125d53b4",
       "kind": "transparent"
     },
     {
       "address": "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
-      "txHash": "0x59d47e6605ff40496347453fe8439c9f83f8741582e3c4f0583eb9f23b5efb9e",
+      "txHash": "0x7c20bc4c2cc198147688c232616aa138f210e945dc981948948675d18e525b32",
       "kind": "transparent"
     },
     {
       "address": "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
-      "txHash": "0x15b59b0b9d70ad25bbe9322f17c592608720ba8c91b29e9cd610a0e0befb5686",
+      "txHash": "0x9d27240d3624011d06fc2fef8d46324c81fe5a923e0dad5d7ade859d77e370e0",
       "kind": "transparent"
     },
     {
       "address": "0x59b670e9fA9D0A427751Af201D676719a970857b",
-      "txHash": "0x25f122351502d102fea0fd2896ae49360c9613e67ce4fdcef1cbfab5b2fc3cb2",
+      "txHash": "0x11e22bad3bf0a6deb920ecb8b1ea8e9deb070912a0588dc5293dc328e7cd3046",
       "kind": "transparent"
     },
     {
       "address": "0x4A679253410272dd5232B3Ff7cF5dbB88f295319",
-      "txHash": "0x5a8698844ab2f7fa35a791f5f2c87b5636916869fc3e5546b0c2ce7b54f8d44f",
+      "txHash": "0x3d1e7f4f9c13633fbc748f57e9243e72240e454bef9587a4d3ff4589797f327e",
       "kind": "transparent"
     },
     {
@@ -6315,7 +6315,7 @@
     },
     "30d4de85d53118c5c32789042c443581c31db97ac6baea4b618f767e534851b3": {
       "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
-      "txHash": "0x455f23e8ca4a435942ace10bf888bed4ae64a34cd2f2a26b008c1f94b720020b",
+      "txHash": "0x0ecf6fa34b1840b6bec2182aeaa6bc74dac447ba382304837a40e93acf8595a7",
       "layout": {
         "solcVersion": "0.8.4",
         "storage": [
