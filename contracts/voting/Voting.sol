@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "contracts/expander/interfaces/IDAOExpander.sol";
 
 contract Voting {
-    IDAOExpander dao;
+    IDAOExpander public dao;
 
     modifier onlyMember()
     {
