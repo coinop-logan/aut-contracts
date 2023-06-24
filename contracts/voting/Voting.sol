@@ -163,7 +163,8 @@ contract Voting {
     }
 
     /// @notice Builds and returns a list of IDs of all active proposals
-    /// @dev Very gas inefficient. In a well-designed dapp, the interface would be doing more of this work.
+    /// @dev Very gas inefficient. Also vulnerable to running out of gas if the list of proposals gets large.
+    ///      In a well-designed dapp, the interface would be doing more of this work.
     /// @return activeProposalIDsTrimmed An array of all proposals that are "active" (see above function).
     function getActiveProposalIDs()
         view
@@ -171,9 +172,9 @@ contract Voting {
         returns (uint[] memory)
     {
         // We first initialize an array to hold the IDs of any active props.
-        // We initialize it with length=proposals.length,
+        // We initialize it with length = `proposals.length`,
         // as we cannot dynamically size (and thus cannot push to) memory arrays,
-        // and we know that it will be at most as big as proposals.
+        // and we know that it will be at most as big as `proposals`.
         uint[] memory activeProposalIDs = new uint[](proposals.length);
 
         uint numActivePropsFound = 0;
