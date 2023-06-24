@@ -2,22 +2,25 @@
 pragma solidity ^0.8.0;
 
 import "contracts/expander/interfaces/IDAOExpander.sol";
+import "contracts/IAutID.sol";
 
 contract Voting {
-    IDAOExpander public dao;
+    IDAOExpander public daoExpander;
+    IAutID public autID;
 
     modifier onlyMember()
     {
-        require(dao.isMember(msg.sender), "msg.sender is not a DAO member");
+        require(daoExpander.isMember(msg.sender), "msg.sender is not a DAO member");
         _;
     }
 
-    constructor(IDAOExpander _dao)
+    constructor(IDAOExpander _daoExpander, IAutID _autID)
     {
-        dao = _dao;
+        daoExpander = _daoExpander;
+        autID = _autID;
 
         // can't use the onlyMember modifier here as dao is not set before constructor start, so we'll just repeat the require
-        require(dao.isMember(msg.sender), "Can only be deployed by DAO member");
+        require(daoExpander.isMember(msg.sender), "Can only be deployed by DAO member");
     }
 
     mapping(uint => mapping(address => bool)) hasVoted;
@@ -66,7 +69,15 @@ contract Voting {
         view
         returns (uint)
     {
-        return 1; // todo
+        uint role = autID.getMembershipData(member, address(daoExpander)).role;
+        if (role == 1)
+        {
+            return 10;
+        }
+        else
+        {
+            revert("I don't know how to handle that role yet!");
+        }
     }
 
     function vote(uint proposalID, bool isSupporting)

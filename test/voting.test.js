@@ -2,8 +2,10 @@ const { expect } = require("chai");
 const { ethers, upgrades } = require("hardhat");
 const helpers = require("@nomicfoundation/hardhat-network-helpers");
 
+let autID;
 let voting;
 let dao;
+let daoExpander;
 
 async function getCurrentBlockTime() {
     const blockNumber = await ethers.provider.getBlockNumber();
@@ -13,10 +15,10 @@ async function getCurrentBlockTime() {
 
 describe("Voting", function () {
     before(async function() {
-        [aMember, nonMember, ...addrs] = await ethers.getSigners();
+        [aMember, nonMember, member2, ...addrs] = await ethers.getSigners();
 
         const AutID = await ethers.getContractFactory("AutID");
-        const autID = await AutID.deploy();
+        autID = await AutID.deploy();
         await autID.deployed();
 
         const DAOTypes = await ethers.getContractFactory("DAOTypes");
@@ -42,7 +44,7 @@ describe("Voting", function () {
         const pluginRegistry = await PluginRegistryFactory.deploy(moduleRegistry.address);
 
         const DAOExpander = await ethers.getContractFactory("DAOExpander");
-        const daoExpander = await DAOExpander.deploy(
+        daoExpander = await DAOExpander.deploy(
             aMember.address,
             autID.address,
             daoTypes.address,
@@ -54,9 +56,10 @@ describe("Voting", function () {
             pluginRegistry.address
         );
         await daoExpander.deployed();
+        await (await autID.mint("user1", "user1url", 1, 3, daoExpander.address)).wait();
 
         const Voting = await ethers.getContractFactory("Voting");
-        voting = await Voting.deploy(dao.address);
+        voting = await Voting.deploy(daoExpander.address, autID.address);
         await voting.deployed();
     });
     describe("proposal creation", function () {
@@ -131,7 +134,7 @@ describe("Voting", function () {
             });
             it("should allow a member to vote once", async function() {
                 await (await voting.vote(1, true)).wait();
-                expect((await voting.getProposal(1)).yeaCount).to.equal(1);
+                expect((await voting.getProposal(1)).yeaCount).to.equal(10);
             });
             it("should not allow a member to vote again", async function() {
                 await expect(
