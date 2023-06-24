@@ -82,14 +82,14 @@ describe("Voting", function () {
             expect(id).to.equal(0);
         });
     });
-    describe("proposal getters", function() {
+    describe("proposals and voting", function() {
         let setupTime;
         before(async function() {
             setupTime = await getCurrentBlockTime();
             await (await voting.createProposal(setupTime + 10, setupTime + 20, "prop 1 dummy metadata")).wait();
-            await (await voting.createProposal(setupTime + 30, setupTime + 40, "prop 2 dummy metadata")).wait();
-            await (await voting.createProposal(setupTime + 30, setupTime + 60, "prop 3 dummy metadata")).wait();
-            await (await voting.createProposal(setupTime + 50, setupTime + 60, "prop 4 dummy metadata")).wait();
+            await (await voting.createProposal(setupTime + 30, setupTime + 100, "prop 2 dummy metadata")).wait();
+            await (await voting.createProposal(setupTime + 30, setupTime + 500, "prop 3 dummy metadata")).wait();
+            await (await voting.createProposal(setupTime + 500, setupTime + 600, "prop 4 dummy metadata")).wait();
             await helpers.time.increase(35);
         });
         describe("getActiveProposals", function() {
@@ -113,6 +113,32 @@ describe("Voting", function () {
                 expect(proposal.cid).to.equal("prop 1 dummy metadata");
             })
         });
+        describe("Voting constraints", function() {
+            it("should not allow a non-member to vote", async function() {
+                await expect(
+                    voting.connect(nonMember).vote(1, true)
+                ).to.be.revertedWith("msg.sender is not a DAO member");
+            });
+            it("should not allow a member to vote on a closed proposal", async function() {
+                await expect(
+                    voting.vote(0, true)
+                ).to.be.revertedWith("Proposal voting has ended.")
+            });
+            it("should not allow a member to vote on a proposal in the future", async function() {
+                await expect(
+                    voting.vote(3, true)
+                ).to.be.revertedWith("Proposal voting has not yet started.")
+            });
+            it("should allow a member to vote once", async function() {
+                await (await voting.vote(1, true)).wait();
+                expect((await voting.getProposal(1)).yeaCount).to.equal(1);
+            });
+            it("should not allow a member to vote again", async function() {
+                await expect(
+                    voting.vote(1, true)
+                ).to.be.reverted;
+            })
+        })
     });
 
 })
