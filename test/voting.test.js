@@ -4,6 +4,12 @@ const { ethers, upgrades } = require("hardhat");
 let voting;
 let dao;
 
+async function getCurrentBlockTime() {
+    const blockNumber = await ethers.provider.getBlockNumber();
+    const block = await ethers.provider.getBlock(blockNumber);
+    return block.timestamp;
+}
+
 describe("Voting", function () {
     before(async function() {
         [aMember, nonMember, ...addrs] = await ethers.getSigners();
@@ -53,8 +59,26 @@ describe("Voting", function () {
         await voting.deployed();
     });
     describe("create proposal", function () {
-        it("should exist", async function () {
-            expect(await voting.dao()).to.equal(dao.address);
+        it("should fail if proposal start is not in the future", async function () {
+            const pastTimestamp = await getCurrentBlockTime() - 1;
+
+            await expect(
+                voting.createProposal(pastTimestamp, pastTimestamp + 10, "")
+            ).to.be.revertedWith("Proposal cannot start in the past");
+        });
+        it("should fail if proposal end is not after proposal start", async function () {
+            const futureTimestamp = await getCurrentBlockTime() + 100;
+
+            await expect(
+                voting.createProposal(futureTimestamp, futureTimestamp - 1, "")
+            ).to.be.revertedWith("End time must be after start time");
+        });
+        it("should create proposal with id=0 if startTime and endTime valid", async function() {
+            const futureTimestamp = await getCurrentBlockTime() + 100;
+
+            const id = await voting.callStatic.createProposal(futureTimestamp, futureTimestamp + 10, "");
+            
+            expect(id).to.equal(0);
         })
     })
 })

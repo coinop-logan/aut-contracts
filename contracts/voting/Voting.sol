@@ -43,7 +43,7 @@ contract Voting {
         newProposal.startTime = _startTime;
         newProposal.endTime = _endTime;
         newProposal.cid = _cid;
-        // the remaining vars can start at their zero stat
+        // the remaining vars can start at their zero state
         // i.e. yeaCount and nayCount = 0
 
         return newPropID;
@@ -58,6 +58,7 @@ contract Voting {
         require(_endTime > _startTime, "End time must be after start time");
 
         uint id = _createProposal(_startTime, _endTime, _cid);
+        return id;
     }
 
     function _getWeightForMember(address member)
