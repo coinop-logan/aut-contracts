@@ -58,7 +58,7 @@ describe("Voting", function () {
         voting = await Voting.deploy(dao.address);
         await voting.deployed();
     });
-    describe("create proposal", function () {
+    describe("proposal creation", function () {
         it("should fail if proposal start is not in the future", async function () {
             const pastTimestamp = await getCurrentBlockTime() - 1;
 
@@ -77,8 +77,8 @@ describe("Voting", function () {
             const futureTimestamp = await getCurrentBlockTime() + 100;
 
             const id = await voting.callStatic.createProposal(futureTimestamp, futureTimestamp + 10, "");
-            
+
             expect(id).to.equal(0);
         })
-    })
+    });
 })
