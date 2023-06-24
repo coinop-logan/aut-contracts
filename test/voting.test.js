@@ -15,7 +15,7 @@ async function getCurrentBlockTime() {
 
 describe("Voting", function () {
     before(async function() {
-        [aMember, nonMember, member2, ...addrs] = await ethers.getSigners();
+        [memberRole1, memberRole2, memberRole3, nonMember, ...addrs] = await ethers.getSigners();
 
         const AutID = await ethers.getContractFactory("AutID");
         autID = await AutID.deploy();
@@ -35,7 +35,9 @@ describe("Voting", function () {
         const DAO = await ethers.getContractFactory("SWLegacyDAO");
         dao = await DAO.deploy();
         await dao.deployed();
-        await dao.addMember(aMember.address);
+        await dao.addMember(memberRole1.address);
+        await dao.addMember(memberRole2.address);
+        await dao.addMember(memberRole3.address);
 
         const ModuleRegistryFactory = await ethers.getContractFactory("ModuleRegistry");
         const moduleRegistry = await ModuleRegistryFactory.deploy();
@@ -45,7 +47,7 @@ describe("Voting", function () {
 
         const DAOExpander = await ethers.getContractFactory("DAOExpander");
         daoExpander = await DAOExpander.deploy(
-            aMember.address,
+            memberRole1.address,
             autID.address,
             daoTypes.address,
             1,
@@ -56,7 +58,9 @@ describe("Voting", function () {
             pluginRegistry.address
         );
         await daoExpander.deployed();
-        await (await autID.mint("user1", "user1url", 1, 3, daoExpander.address)).wait();
+        await (await autID.connect(memberRole1).mint("user1", "user1url", 1, 3, daoExpander.address)).wait();
+        await (await autID.connect(memberRole2).mint("user2", "user2url", 2, 3, daoExpander.address)).wait();
+        await (await autID.connect(memberRole3).mint("user3", "user3url", 3, 3, daoExpander.address)).wait();
 
         const Voting = await ethers.getContractFactory("Voting");
         voting = await Voting.deploy(daoExpander.address, autID.address);
@@ -141,6 +145,15 @@ describe("Voting", function () {
                     voting.vote(1, true)
                 ).to.be.reverted;
             });
+            it("should have correct weights", async function() {
+                expect((await voting.getProposal(2)).yeaCount).to.equal(0);
+                await (await voting.connect(memberRole1).vote(2, true)).wait();
+                expect((await voting.getProposal(2)).yeaCount).to.equal(10); // from the voting weight of 10 from role A
+                await (await voting.connect(memberRole2).vote(2, true)).wait();
+                expect((await voting.getProposal(2)).yeaCount).to.equal(10 + 20); // voting weights 10 + 20
+                await (await voting.connect(memberRole3).vote(2, true)).wait();
+                expect((await voting.getProposal(2)).yeaCount).to.equal(10 + 20 + 35); // voting weights 10 + 20 + 35
+            })
         })
     });
 

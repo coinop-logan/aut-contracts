@@ -98,9 +98,16 @@ contract Voting {
         {
             return 10;
         }
-        else
+        else if (role == 2)
         {
-            revert("I don't know how to handle that role yet!");
+            return 20;
+        }
+        else if (role == 3)
+        {
+            return 35;
+        }
+        else {
+            revert ("that role shouldn't be possible!");
         }
     }
 
