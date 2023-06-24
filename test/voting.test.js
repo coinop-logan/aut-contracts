@@ -89,7 +89,7 @@ describe("Voting", function () {
             await (await voting.createProposal(setupTime + 10, setupTime + 20, "prop 1 dummy metadata")).wait();
             await (await voting.createProposal(setupTime + 30, setupTime + 40, "prop 2 dummy metadata")).wait();
             await (await voting.createProposal(setupTime + 30, setupTime + 60, "prop 3 dummy metadata")).wait();
-            await (await voting.createProposal(setupTime + 50, setupTime + 60, "prop 3 dummy metadata")).wait();
+            await (await voting.createProposal(setupTime + 50, setupTime + 60, "prop 4 dummy metadata")).wait();
             await helpers.time.increase(35);
         });
         describe("getActiveProposals", function() {
@@ -114,4 +114,5 @@ describe("Voting", function () {
             })
         });
     });
+
 })
