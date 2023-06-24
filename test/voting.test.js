@@ -140,7 +140,7 @@ describe("Voting", function () {
                 await expect(
                     voting.vote(1, true)
                 ).to.be.reverted;
-            })
+            });
         })
     });
 
