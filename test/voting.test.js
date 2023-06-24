@@ -1,5 +1,6 @@
 const { expect } = require("chai");
 const { ethers, upgrades } = require("hardhat");
+const helpers = require("@nomicfoundation/hardhat-network-helpers");
 
 let voting;
 let dao;
@@ -73,12 +74,44 @@ describe("Voting", function () {
                 voting.createProposal(futureTimestamp, futureTimestamp - 1, "")
             ).to.be.revertedWith("End time must be after start time");
         });
-        it("should create proposal with id=0 if startTime and endTime valid", async function() {
+        it("initial proposal creation should return id = 0", async function() {
             const futureTimestamp = await getCurrentBlockTime() + 100;
 
             const id = await voting.callStatic.createProposal(futureTimestamp, futureTimestamp + 10, "");
 
             expect(id).to.equal(0);
-        })
+        });
+    });
+    describe("proposal getters", function() {
+        let setupTime;
+        before(async function() {
+            setupTime = await getCurrentBlockTime();
+            await (await voting.createProposal(setupTime + 10, setupTime + 20, "prop 1 dummy metadata")).wait();
+            await (await voting.createProposal(setupTime + 30, setupTime + 40, "prop 2 dummy metadata")).wait();
+            await (await voting.createProposal(setupTime + 30, setupTime + 60, "prop 3 dummy metadata")).wait();
+            await (await voting.createProposal(setupTime + 50, setupTime + 60, "prop 3 dummy metadata")).wait();
+            await helpers.time.increase(35);
+        });
+        describe("getActiveProposals", function() {
+            it("should return only proposals 2 and 3", async function() {
+                const activePropIDs = await voting.getActiveProposalIDs();
+                expect(activePropIDs.length).to.equal(2);
+                expect(activePropIDs[0]).to.equal(1);
+                expect(activePropIDs[1]).to.equal(2);
+            })
+        });
+        describe("getProposal", function() {
+            it("should revert if id is invalid", async function() {
+                await expect(
+                    voting.getProposal(4)
+                ).to.be.reverted;
+            })
+            it("should return the proper info for prop 1", async function() {
+                const proposal = await voting.getProposal(0);
+                expect(proposal.startTime).to.equal(setupTime + 10);
+                expect(proposal.endTime).to.equal(setupTime + 20);
+                expect(proposal.cid).to.equal("prop 1 dummy metadata");
+            })
+        });
     });
 })
