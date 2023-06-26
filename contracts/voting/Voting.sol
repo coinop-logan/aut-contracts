@@ -71,7 +71,7 @@ contract Voting {
     }
 
     /// @notice External function to create proposal
-    /// @dev Checks time boundary conditions before creating the proposal via the above internal function
+    /// @dev Checks time boundary conditions, then creates the proposal via the above internal function
     /// @return newPropID The id (aka array position) of the new proposal
     function createProposal(uint _startTime, uint _endTime, string calldata _cid)
         public
@@ -100,11 +100,11 @@ contract Voting {
         }
         else if (role == 2)
         {
-            return 20;
+            return 20; // a placeholder guess
         }
         else if (role == 3)
         {
-            return 35;
+            return 35; // a placeholder guess
         }
         else {
             revert ("that role shouldn't be possible!");
@@ -164,7 +164,7 @@ contract Voting {
 
     /// @notice Builds and returns a list of IDs of all active proposals
     /// @dev Very gas inefficient. Also vulnerable to running out of gas if the list of proposals gets large.
-    ///      In a well-designed dapp, the interface would be doing more of this work.
+    /// @dev In a well-designed dapp, the interface would be doing more of this work.
     /// @return activeProposalIDsTrimmed An array of all proposals that are "active" (see above function).
     function getActiveProposalIDs()
         view

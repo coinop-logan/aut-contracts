@@ -81,7 +81,7 @@ describe("Voting", function () {
                 voting.createProposal(futureTimestamp, futureTimestamp - 1, "")
             ).to.be.revertedWith("End time must be after start time");
         });
-        it("initial proposal creation should return id = 0", async function() {
+        it("proposal creation should succeed and should return id = 0", async function() {
             const futureTimestamp = await getCurrentBlockTime() + 100;
 
             const id = await voting.callStatic.createProposal(futureTimestamp, futureTimestamp + 10, "");
@@ -93,10 +93,10 @@ describe("Voting", function () {
         let setupTime;
         before(async function() {
             setupTime = await getCurrentBlockTime();
-            await (await voting.createProposal(setupTime + 10, setupTime + 20, "prop 1 dummy metadata")).wait();
-            await (await voting.createProposal(setupTime + 30, setupTime + 100, "prop 2 dummy metadata")).wait();
-            await (await voting.createProposal(setupTime + 30, setupTime + 500, "prop 3 dummy metadata")).wait();
-            await (await voting.createProposal(setupTime + 500, setupTime + 600, "prop 4 dummy metadata")).wait();
+            await (await voting.createProposal(setupTime + 10, setupTime + 20, "prop 1 dummy cid")).wait();
+            await (await voting.createProposal(setupTime + 30, setupTime + 100, "prop 2 dummy cid")).wait();
+            await (await voting.createProposal(setupTime + 30, setupTime + 500, "prop 3 dummy cid")).wait();
+            await (await voting.createProposal(setupTime + 500, setupTime + 600, "prop 4 dummy cid")).wait();
             await helpers.time.increase(35);
         });
         describe("getActiveProposals", function() {
@@ -113,11 +113,11 @@ describe("Voting", function () {
                     voting.getProposal(4)
                 ).to.be.reverted;
             })
-            it("should return the proper info for prop 1", async function() {
+            it("should return the proper info for proposal 1", async function() {
                 const proposal = await voting.getProposal(0);
                 expect(proposal.startTime).to.equal(setupTime + 10);
                 expect(proposal.endTime).to.equal(setupTime + 20);
-                expect(proposal.cid).to.equal("prop 1 dummy metadata");
+                expect(proposal.cid).to.equal("prop 1 dummy cid");
             })
         });
         describe("Voting constraints", function() {
@@ -156,5 +156,4 @@ describe("Voting", function () {
             })
         })
     });
-
 })
