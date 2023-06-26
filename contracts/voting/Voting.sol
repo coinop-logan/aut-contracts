@@ -100,7 +100,7 @@ contract Voting {
         }
         else if (role == 2)
         {
-            return 20; // a placeholder guess
+            return 21;
         }
         else if (role == 3)
         {

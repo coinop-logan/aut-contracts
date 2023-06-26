@@ -150,9 +150,9 @@ describe("Voting", function () {
                 await (await voting.connect(memberRole1).vote(2, true)).wait();
                 expect((await voting.getProposal(2)).yeaCount).to.equal(10); // from the voting weight of 10 from role A
                 await (await voting.connect(memberRole2).vote(2, true)).wait();
-                expect((await voting.getProposal(2)).yeaCount).to.equal(10 + 20); // voting weights 10 + 20
+                expect((await voting.getProposal(2)).yeaCount).to.equal(10 + 21); // voting weights 10 + 21
                 await (await voting.connect(memberRole3).vote(2, true)).wait();
-                expect((await voting.getProposal(2)).yeaCount).to.equal(10 + 20 + 18); // voting weights 10 + 20 + 18
+                expect((await voting.getProposal(2)).yeaCount).to.equal(10 + 21 + 18); // voting weights 10 + 21 + 18
             })
         })
     });
