@@ -152,7 +152,7 @@ describe("Voting", function () {
                 await (await voting.connect(memberRole2).vote(2, true)).wait();
                 expect((await voting.getProposal(2)).yeaCount).to.equal(10 + 20); // voting weights 10 + 20
                 await (await voting.connect(memberRole3).vote(2, true)).wait();
-                expect((await voting.getProposal(2)).yeaCount).to.equal(10 + 20 + 35); // voting weights 10 + 20 + 35
+                expect((await voting.getProposal(2)).yeaCount).to.equal(10 + 20 + 18); // voting weights 10 + 20 + 18
             })
         })
     });

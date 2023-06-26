@@ -104,7 +104,7 @@ contract Voting {
         }
         else if (role == 3)
         {
-            return 35; // a placeholder guess
+            return 18;
         }
         else {
             revert ("that role shouldn't be possible!");
