@@ -3,6 +3,7 @@ const { ethers, upgrades } = require("hardhat");
 const helpers = require("@nomicfoundation/hardhat-network-helpers");
 
 let autID;
+let Voting;
 let voting;
 let dao;
 let daoExpander;
@@ -62,11 +63,23 @@ describe("Voting", function () {
         await (await autID.connect(memberRole2).mint("user2", "user2url", 2, 3, daoExpander.address)).wait();
         await (await autID.connect(memberRole3).mint("user3", "user3url", 3, 3, daoExpander.address)).wait();
 
-        const Voting = await ethers.getContractFactory("Voting");
+        Voting = await ethers.getContractFactory("Voting");
         voting = await Voting.deploy(daoExpander.address, autID.address);
         await voting.deployed();
     });
+    it("Should revert if constructed with non-DAO-member", async function() {
+        await expect(
+            Voting.connect(nonMember).deploy(daoExpander.address, autID.address)
+        ).to.be.revertedWith("Can only be deployed by DAO member");
+    })
     describe("proposal creation", function () {
+        it("should fail if called by non-member", async function() {
+            const futureTimestamp = await getCurrentBlockTime() + 100;
+
+            await expect(
+                voting.connect(nonMember).createProposal(futureTimestamp, futureTimestamp + 10, "")
+            ).to.be.revertedWith("msg.sender is not a DAO member")
+        })
         it("should fail if proposal start is not in the future", async function () {
             const pastTimestamp = await getCurrentBlockTime() - 1;
 
@@ -81,7 +94,7 @@ describe("Voting", function () {
                 voting.createProposal(futureTimestamp, futureTimestamp - 1, "")
             ).to.be.revertedWith("End time must be after start time");
         });
-        it("proposal creation should succeed and should return id = 0", async function() {
+        it("proper proposal creation should succeed and should return id = 0", async function() {
             const futureTimestamp = await getCurrentBlockTime() + 100;
 
             const id = await voting.callStatic.createProposal(futureTimestamp, futureTimestamp + 10, "");

@@ -4,6 +4,10 @@ This contains the Voting contract as per the exercise specs. For expediency I ha
 
 As in the original repo, the tests are run on a local node via hardhat.
 
+# A note on comprehensive testing
+
+To help generate a list of unit tests, I searched the contract code for any branching logic (i.e. if statements or requires), then wrote a test for each of these outcomes.
+
 # Setup
 
 Basically the same as the original repo:
